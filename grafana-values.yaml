@@ -2,31 +2,35 @@ datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
-    - name: Prometheus
-      uid: prometheus
-      type: prometheus
-      url: http://prometheus-server.monitoring.svc.cluster.local:80
-      access: proxy
-      isDefault: true
-      editable: true
-    - name: Loki
-      uid: Loki
-      type: loki
-      url: http://loki.monitoring.svc.cluster.local:3100
-      access: proxy
-      editable: true
-      jsonData:
-        httpHeaderName1: 'X-Scope-OrgID'
-      secureJsonData:
-        httpHeaderValue1: '1'
-    - name: Tempo
-      uid: Tempo
-      type: tempo
-      url: http://tempo.monitoring.svc.cluster.local:3200
-      access: proxy
-      editable: true
-      jsonData:
-        httpMethod: GET
-        tracesToLogs:
-          datasourceUid: 'Loki'
-          tags: ['k8s.pod.name', 'service.name']
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local:80
+        access: proxy
+        isDefault: true
+        editable: true
+
+      - name: Loki
+        uid: Loki
+        type: loki
+        url: http://loki.monitoring.svc.cluster.local:3100
+        access: proxy
+        editable: true
+        jsonData:
+          httpHeaderName1: 'X-Scope-OrgID'
+        secureJsonData:
+          httpHeaderValue1: '1'
+
+      - name: Tempo
+        uid: Tempo
+        type: tempo
+        url: http://tempo.monitoring.svc.cluster.local:3200
+        access: proxy
+        editable: true
+        jsonData:
+          httpMethod: GET
+          tracesToLogs:
+            datasourceUid: 'Loki'
+            tags:
+              - 'k8s.pod.name'
+              - 'service.name'

@@ -1,0 +1,288 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_TEMPO",
+      "label": "Tempo",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "tempo",
+      "pluginName": "Tempo"
+    }
+  ],
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Trace workflow",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Select a **Service** and investigate **recent**, **slow**, and **error** traces. The filter is based on the OpenTelemetry `resource.service.name` attribute confirmed in your Tempo Explore screen."
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "table",
+      "title": "Recent Traces",
+      "datasource": {
+        "type": "tempo",
+        "uid": "${DS_TEMPO}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 10
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "traceql",
+          "query": "{resource.service.name =~ \"${service:regex}\"}",
+          "limit": 50,
+          "tableType": "traces"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Slow Traces (>1s)",
+      "datasource": {
+        "type": "tempo",
+        "uid": "${DS_TEMPO}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 10
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "traceql",
+          "query": "{resource.service.name =~ \"${service:regex}\" && trace:duration > 1s}",
+          "limit": 50,
+          "tableType": "traces"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Error Traces",
+      "datasource": {
+        "type": "tempo",
+        "uid": "${DS_TEMPO}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 10
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "traceql",
+          "query": "{resource.service.name =~ \"${service:regex}\" && status = error}",
+          "limit": 50,
+          "tableType": "traces"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Service-to-Service Dependencies",
+      "datasource": {
+        "type": "tempo",
+        "uid": "${DS_TEMPO}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 9
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "traceql",
+          "query": "{resource.service.name =~ \"${service:regex}\"}",
+          "limit": 30,
+          "tableType": "traces"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "text",
+      "title": "TraceQL syntax used",
+      "gridPos": {
+        "x": 0,
+        "y": 43,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Grafana/Tempo TraceQL uses string regex syntax such as `{resource.service.name =~ \"frontend|checkoutservice\"}`. The previous JSON used `/.../`, which caused the `unexpected /` parse error. Your Explore screenshot shows the valid equality form `{resource.service.name=\"frontend\"}`."
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": [
+    "kubernetes",
+    "tempo",
+    "traces",
+    "troubleshooting"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "custom",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "query": "frontend,adservice,cartservice,checkoutservice,currencyservice,emailservice,paymentservice,productcatalogservice,recommendationservice,shippingservice,collector",
+        "options": [
+          {
+            "selected": true,
+            "text": "frontend",
+            "value": "frontend"
+          },
+          {
+            "selected": false,
+            "text": "adservice",
+            "value": "adservice"
+          },
+          {
+            "selected": false,
+            "text": "cartservice",
+            "value": "cartservice"
+          },
+          {
+            "selected": false,
+            "text": "checkoutservice",
+            "value": "checkoutservice"
+          },
+          {
+            "selected": false,
+            "text": "currencyservice",
+            "value": "currencyservice"
+          },
+          {
+            "selected": false,
+            "text": "emailservice",
+            "value": "emailservice"
+          },
+          {
+            "selected": false,
+            "text": "paymentservice",
+            "value": "paymentservice"
+          },
+          {
+            "selected": false,
+            "text": "productcatalogservice",
+            "value": "productcatalogservice"
+          },
+          {
+            "selected": false,
+            "text": "recommendationservice",
+            "value": "recommendationservice"
+          },
+          {
+            "selected": false,
+            "text": "shippingservice",
+            "value": "shippingservice"
+          },
+          {
+            "selected": false,
+            "text": "collector",
+            "value": "collector"
+          },
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        }
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timezone": "",
+  "title": "Kubernetes Traces \u2014 Tempo / Service Troubleshooting",
+  "uid": "k8s-tempo-service-final",
+  "version": 1
+}
