@@ -22,3 +22,9 @@
                          │   Grafana   │
                          │ Visualization│
                          └─────────────┘
+
+
+
+
+
+Run the deploy.sh 
