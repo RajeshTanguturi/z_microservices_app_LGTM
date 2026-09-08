@@ -1,9 +1,10 @@
 mode: daemonset
 
 image:
-  repository: "otel/opentelemetry-collector-contrib"
+  repository: otel/opentelemetry-collector-contrib
 
 presets:
+
   logsCollection:
     enabled: true
     includeCollectorLogs: false
@@ -15,6 +16,7 @@ service:
   enabled: true
 
 ports:
+
   otlp:
     enabled: true
     containerPort: 4317
@@ -28,59 +30,79 @@ ports:
     protocol: TCP
 
 config:
+
   receivers:
+
     otlp:
+
       protocols:
+
         grpc:
           endpoint: 0.0.0.0:4317
+
         http:
           endpoint: 0.0.0.0:4318
 
   exporters:
+
     otlp_grpc/tempo:
       endpoint: tempo.monitoring.svc.cluster.local:4317
+
       tls:
         insecure: true
 
     prometheusremotewrite:
       endpoint: http://prometheus-server.monitoring.svc.cluster.local:80/api/v1/write
+
       tls:
         insecure: true
 
     otlp_http/loki:
       endpoint: http://loki.monitoring.svc.cluster.local:3100/otlp
+
       headers:
-        "X-Scope-OrgID": "1"
+        X-Scope-OrgID: "1"
 
   service:
+
     pipelines:
+
       traces:
+
         receivers:
           - otlp
+
         processors:
           - memory_limiter
           - k8s_attributes
           - batch
+
         exporters:
           - otlp_grpc/tempo
 
       metrics:
+
         receivers:
           - otlp
+
         processors:
           - memory_limiter
           - k8s_attributes
           - batch
+
         exporters:
           - prometheusremotewrite
 
       logs:
+
         receivers:
           - otlp
           - file_log
+
         processors:
           - memory_limiter
           - k8s_attributes
           - batch
+
         exporters:
           - otlp_http/loki
