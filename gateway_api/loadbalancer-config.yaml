@@ -1,0 +1,11 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: LoadBalancerConfiguration
+metadata:
+  name: public-alb-config
+  namespace: demo
+spec:
+  scheme: internet-facing
+
+  listenerConfigurations:
+    - protocolPort: HTTPS:443
+      defaultCertificate: arn:aws:acm:us-east-1:599476213248:certificate/cbd19a9f-a477-4512-859f-0c4142b46f1d

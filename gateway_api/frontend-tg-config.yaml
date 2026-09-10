@@ -1,0 +1,10 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: frontend-tg-config
+  namespace: demo
+spec:
+  targetReference:
+    name: frontend-external
+  defaultConfiguration:
+    targetType: ip
